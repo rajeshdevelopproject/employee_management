@@ -115,7 +115,12 @@ export default{
         if(!error){
         await axios.get("http://localhost:3000/users").then((res)=>{
           if(res.status ==200|| res.status ==201){
-              output = res.data.length
+              if(res.data.length>0){
+              output = parseInt(res.data[res.data.length-1]['id'])
+              }
+              else{
+                output = 0
+              }
           }
         })
 

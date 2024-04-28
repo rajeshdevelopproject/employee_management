@@ -215,7 +215,7 @@ export default{
                 },
                 {
                     "text":'DOB',
-                    "value":"dOB",
+                    "value":"dob",
                 },
                 {
                     "text":'Address',
@@ -316,7 +316,13 @@ export default{
                 return
             }
             let output = this.overallUser.filter((obj)=>{
-                return obj[`${this.searchtype}`].includes(this.search)
+                console.log('searchtype',this.searchtype)
+                if( typeof obj[`${this.searchtype}`] =='string'){
+                    return obj[`${this.searchtype}`].toLowerCase().includes(this.search.toLowerCase())
+                }
+                else{
+                    return obj[`${this.searchtype}`].includes(this.search)
+                }
             })
             this.overallUser = output
             this.$bvModal.hide('dialog')
@@ -364,7 +370,12 @@ export default{
             let output =0
             await axios.get(`http://localhost:3000/employee?userId=${this.users['id']}`).then((res)=>{
                 if(res.status ==200|| res.status ==201){
-                    output = res.data.length
+                    if(res.data.length>0){
+                        output = parseInt(res.data[res.data.length-1]['id'])
+                        }
+                        else{
+                            output = 0
+                        }
                 }
                 })
             let data = {
@@ -380,20 +391,18 @@ export default{
             if(this.editid ==null){
                     await axios.post(`http://localhost:3000/employee`,data).then((res)=>{
                 if(res.status ==200|| res.status ==201){
-                    this.overallUser.push(data)
                     this.$bvModal.hide('model_open')
-                    alert("Employee Edited Succesfully")
-                        }
-                        this.getEmploye()
+                    alert("Employee Added Succesfully")
+                    this.getEmploye()
+                    }
+                        
                 })
             }
             else{
                 await axios.post(`http://localhost:3000/employee/${this.editid}`,data).then((res)=>{
                 if(res.status ==200|| res.status ==201){
-                    this.overallUser.push(data)
-                    this.overallUser = JSON.stringify(JSON.parse(this.overallUser))
                     this.$bvModal.hide('model_open')
-                    alert("Employee Added Succesfully")
+                    alert("Employee Edited Succesfully")
                     this.getEmploye()
                         }
                 })
