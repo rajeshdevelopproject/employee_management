@@ -1,0 +1,47 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "companyname": "test",
+      "email": "rajesh@gmail.com",
+      "pass": "12345678",
+      "logo": {}
+    }
+  ],
+  "employee": [
+    {
+      "id": 1,
+      "name": "Rajesh",
+      "dob": "2024-04-20",
+      "address": "sdsdd",
+      "city": "Tambarm",
+      "state": "Tamil Nadu",
+      "experience": [
+        {
+          "companyname": "Ssd",
+          "startdate": "2024-04-20",
+          "enddate": "2024-04-19",
+          "position": "B"
+        }
+      ],
+      "userId": 1
+    },
+    {
+      "id": 2,
+      "name": "Naw",
+      "dob": "2024-04-19",
+      "address": "Sssdds",
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "experience": [
+        {
+          "companyname": "sdsdsd",
+          "startdate": "2024-04-19",
+          "enddate": "2024-04-12",
+          "position": "B"
+        }
+      ],
+      "userId": 1
+    }
+  ]
+}

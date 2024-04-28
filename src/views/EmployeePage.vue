@@ -88,7 +88,7 @@
                     ></v-text-field>
                 <div class="bottom-btn">
                     <v-btn class="close-btb" @click="closedialog">CLOSE</v-btn>
-                    <v-btn>SEARCH</v-btn>
+                    <v-btn @click="filterValue">SEARCH</v-btn>
                 </div>
             </div>
         </b-modal>
@@ -126,7 +126,7 @@
                         disabled
                         filled
                     ></v-text-field>
-                    <experience-card :experience ="this.experience"></experience-card>
+                    <experience-card :experience ="this.experience" :experienceAdd="experienceAdd" ></experience-card>
 
                     <v-btn class="commonbtn submitbtn" @click='checkValid()' >submit</v-btn>
                 </v-form>
@@ -152,7 +152,7 @@ export default{
         return{
             dialog:false,
             search:'',
-            searchtype:null,
+            searchtype:"",
             state:'Tamil Nadu',
             overallUser:[],
             editid:null,
@@ -206,7 +206,7 @@ export default{
             searchoption:[
             {
                     "text":'Select',
-                    "value":null,
+                    "value":"",
                     disabled:true
                 },
                 {
@@ -215,21 +215,21 @@ export default{
                 },
                 {
                     "text":'DOB',
-                    "value":"DOB",
+                    "value":"dOB",
                 },
                 {
                     "text":'Address',
-                    "value":"Address",
+                    "value":"address",
                 },
                 {
                     "text":'City',
-                    "value":"City",
+                    "value":"city",
                 },
             ],
             cites:[
                 {
                     "text":'City',
-                    "value":null,
+                    "value":"",
                     disabled:true
                 },
                 {
@@ -257,7 +257,7 @@ export default{
                     "value":"   ThenKasi",
                 }
             ],
-            country:null,
+            country:"",
             headers:[
                 {key:'S.No',
                 width:'80px'
@@ -295,12 +295,31 @@ export default{
        
     },
     methods:{
+        experienceAdd(){
+            this.experience.push( {
+                    "companyname":"",
+                    "startdate":"",
+                    "enddate":"",
+                    "position":"",
+                })
+        },
         getEmploye(){
-            axios.get(`http://localhost:3000/employee?userid=${this.users['id']}`).then((res)=>{
+            axios.get(`http://localhost:3000/employee?userId=${this.users['id']}`).then((res)=>{
                 if(res.status ==200||res.status==201){
                     this.overallUser = res.data
                 }
         })
+        },
+        filterValue(){
+            if(this.search =='' ||this.searchtype ==''){
+                alert("Fill the all details in search dialog ")
+                return
+            }
+            let output = this.overallUser.filter((obj)=>{
+                return obj[`${this.searchtype}`].includes(this.search)
+            })
+            this.overallUser = output
+            this.$bvModal.hide('dialog')
         },
         deleteEmp(id){
              axios.delete(`http://localhost:3000/employee/${id}`).then((res)=>{
@@ -323,6 +342,7 @@ export default{
             this.$bvModal.show('model_open')
         },
         checkValid(){
+            console.log("heh")
             if(this.name ==""||this.dob == ""|| this.city =="" ||this.address ==null ||this.name ==null||this.dob == null|| this.city ==null ||this.address ==null ){
                 alert("Please Fill the user details")
                 return
@@ -334,16 +354,15 @@ export default{
                         return 
                     }
                 }
-            }
-            else{
                 this.AddEmplyee()
             }
+            
         },
         async AddEmplyee(){
 
             
             let output =0
-            await axios.get(`http://localhost:3000/employee?userid=${this.users['id']}`).then((res)=>{
+            await axios.get(`http://localhost:3000/employee?userId=${this.users['id']}`).then((res)=>{
                 if(res.status ==200|| res.status ==201){
                     output = res.data.length
                 }
@@ -356,13 +375,12 @@ export default{
                 city:this.city,
                 state:"Tamil Nadu",
                 experience:this.experience,
-                userid:this.users['id'],
+                userId:this.users['id'],
             }
             if(this.editid ==null){
                     await axios.post(`http://localhost:3000/employee`,data).then((res)=>{
                 if(res.status ==200|| res.status ==201){
                     this.overallUser.push(data)
-                    this.overallUser = JSON.stringify(JSON.parse(this.overallUser))
                     this.$bvModal.hide('model_open')
                     alert("Employee Edited Succesfully")
                         }
@@ -397,6 +415,7 @@ export default{
             this.$bvModal.show('model_open')
         },
         openDialog(){
+           
             this.$bvModal.show('dialog')
         },
         closedialog(){

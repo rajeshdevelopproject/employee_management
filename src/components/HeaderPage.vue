@@ -24,7 +24,13 @@ export default{
     },
     methods:{
         logout(){
-            this.$router.push({path:"/login"})
+
+            if(confirm("Are you sure want logout")){
+                this.$store.commit('SET_CURRENT_USER',{})
+                this.$router.push({path:"/login"})
+            }
+          
+            // this.$router.push({path:"/login"})
         },
         home(){
             this.$router.push({path:"/home"})
@@ -51,6 +57,7 @@ export default{
 .right-align>*{
     width: 20px;
     height: 20px;
+    cursor: pointer;
 }
 .logo{
     width: 20px;

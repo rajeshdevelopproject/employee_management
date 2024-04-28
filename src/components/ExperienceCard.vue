@@ -3,7 +3,6 @@
         <p class="title">Experience</p>
         <template v-if="this.experience.length>0">
         <div v-for="(data,index) in this.experience" :key="index">
-          {{ index }}
         <v-text-field
             
             v-model="data['companyname']"
@@ -32,7 +31,7 @@
     </b-form-group>
   </div>
 </template>
-        <v-btn class="commonbtn add-exp" > Add Experience</v-btn>
+        <v-btn class="commonbtn add-exp" @click="experienceAdd()"> Add Experience</v-btn>
     </div>
 </template>
 <script>
@@ -40,6 +39,9 @@ export default{
   props:{
     experience:{
       typeof:Array
+    },
+    experienceAdd:{
+      typeof : Function
     }
   },
     data(){
