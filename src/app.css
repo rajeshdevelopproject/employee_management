@@ -1,0 +1,20 @@
+
+.link{
+    text-align: center;
+    color: blue;
+}
+.link:hover,.link:active,.link:focus{
+    color: blue;
+}
+/* .notranslate{
+    display: none !important;
+} */
+.link-div{
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.v-label--active{
+    left: -68px !important
+}
