@@ -27,7 +27,7 @@ export default {
 .app{
 
 }
-.btn{
+.commonbtn{
   color: white !important;
   background-color: #93d184 !important;
   margin-left: 0px !important;

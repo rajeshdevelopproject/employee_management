@@ -1,5 +1,6 @@
 <template>
     <v-row id="register">
+   
         <v-col cols="3" md="4">
           <v-form ref="form" @submit.prevent="sendData">
             <v-text-field
@@ -29,7 +30,7 @@
             filled
           ></v-text-field>
           <v-btn
-            class="btn log-reg"
+            class="commonbtn log-reg"
             @click= "submit"
             type="submit"
             >
@@ -53,6 +54,7 @@ export default{
       logo:'',
       email:'',
       pass :'',
+      warningAleart:false,
       isValid:true,
       companyname:'',
       rules: {
@@ -96,29 +98,42 @@ export default{
         console.log('logo',this.logo)
         if(this.companyname ==''||this.email==''||this.pass=='' || this.logo ==''||!this.isValid){
         this.$refs.form.validate();
+        return
         }
         let output = 0
-        console.log(this.valid)
+       let error = false
+       
+        await axios.get(`http://localhost:3000/users?email=${this.email}`).then((res)=>{
+          if(res.status ==200|| res.status ==201){
+              if(res.data.length>0){
+                alert("Email is already registered")
+                error =true
+              return true
+              }
+          }
+        })
+        if(!error){
         await axios.get("http://localhost:3000/users").then((res)=>{
           if(res.status ==200|| res.status ==201){
-              console.log('faga',res)
               output = res.data.length
           }
         })
 
         let data = {
           id:output+1,
-          companyname:'Test',
-          email:"helo@gmail.com",
-          pass:"ESDRRTGGG",
-          logo:'',
-          experience:[]
+          companyname:this.companyname,
+          email:this.email,
+          pass:this.pass,
+          logo:this.logo,
         }
         axios.post("http://localhost:3000/users",data).then((res)=>{
           if(res.status ==200|| res.status ==201){
               console.log('faga',res)
+              alert("Registered successfully")
+              this.$router.push({path:'/login'})
           }
         })
+      }
       }
     }
 }

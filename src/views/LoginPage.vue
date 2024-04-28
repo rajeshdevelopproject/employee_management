@@ -15,7 +15,7 @@
             filled
           ></v-text-field>
             <v-btn
-            class="btn log-reg m-0"
+            class="commonbtn log-reg m-0"
             @click ="submit"
             >
             LOGIN IN
@@ -76,10 +76,22 @@ export default {
           return
         }
        
-        axios.get("http://localhost:3000/users?email=helo@gmails.com").then((res)=>{
+        axios.get(`http://localhost:3000/users?email=${this.email}`).then((res)=>{
           if(res.status ==200|| res.status ==201){
-             this.$store.commit('SET_CURRENT_USER',res.data[0])
-             this.$router.push({'path':'/home'})
+            if(res.data.length>0 ){
+              if(res.data[0].pass ==this.password){
+                alert("Logged in successfully")
+                this.$store.commit('SET_CURRENT_USER',res.data[0])
+                this.$router.push({'path':'/home'})
+                
+                return
+              }
+              else{
+                alert("Incorrect Password")
+                return
+              }
+            }
+            alert("Email is not registered")
           }
         })
       }

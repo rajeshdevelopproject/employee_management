@@ -1,12 +1,11 @@
 <template>
     <div id="header">
         <div class="left-align">
-            <img :src="users['logo']" alt="No Image">
+            <img class="logo" :src="users['logo']" alt="No Image">
             <p>{{ this.users['companyname'] }}</p>
         </div>
         <div class="right-align">
             <img src="../../public/on-off-button.png" @click="logout" alt="No Image">
-            <img src="../../public/on-off-button.png" alt="No Image">
             <img src="../../public/home.png" alt="No Image" @click="home">
             <img src="../../public/profile-user.png" alt="No Image">
         </div>
@@ -33,7 +32,7 @@ export default{
     }
 }
 </script>
-<style>
+<style scoped>
 #header{
     height: 40px;
     width: 100%;
@@ -45,10 +44,15 @@ export default{
 }
 .left-align{
    display: grid;
-   grid-template-columns: 2fr 4fr;
+   grid-template-columns: 2fr 8fr;
    align-items: center;
+   text-align: center;
 }
 .right-align>*{
+    width: 20px;
+    height: 20px;
+}
+.logo{
     width: 20px;
     height: 20px;
 }
@@ -57,5 +61,8 @@ export default{
     justify-content: space-between;
     width: 20%;
     align-items: center;
+}
+p{
+    margin-bottom: 0px;
 }
 </style>

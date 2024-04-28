@@ -1,11 +1,12 @@
 <template>
     <div>
         <header-comp ></header-comp>
+        <div class="container">
         <div>
             <div class="add-emp-but">
                 <v-btn
                     depressed
-                    class="btn add-btn"
+                    class="commonbtn add-btn"
                     @click="openModel"
                     >
                     ADD EMPLOYEE
@@ -13,102 +14,136 @@
             </div>
             <div class="tables-com">
                 <div class="search">
-                    <v-btn
+                    <v-btn  
                         depressed
-                        class="test search-btn"
+                        class="commonbtn search-btn"
+                        @click="openDialog"
                         >
                         Search
                     </v-btn>
                 </div>
                 <div class="tables">
-
+                    <table>
+                        <thead>
+                            <tr>
+                                <th v-for="obj in this.headers" :key="obj.key" :style="{width:obj.width}" >
+                                    {{ obj['key'] }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <template v-if="this.overallUser.length ==0">
+                                <tr>
+                                    <td colspan='8'> No Record</td>
+                                   
+                                </tr>
+                            </template>
+                            <template>
+                                <tr  v-for="obj,index in this.overallUser" :key="obj.key">
+                                    <td >
+                                    {{ index+1}}
+                                    </td>
+                                    <td >
+                                    {{ obj.name }}
+                                    </td>
+                                    <td >
+                                    {{ obj.dob }}
+                                    </td>
+                                    <td >
+                                    {{ obj.address }}
+                                    </td>
+                                    <td >
+                                    {{ obj.city }}
+                                    </td>
+                                    <td >
+                                    {{ obj.state }}
+                                    </td>
+                                    <td >
+                                    {{ obj.experience.length }}
+                                    </td>
+                                    <td class="actions">
+                                        <img  src="../../public/edit.png" @click="edit(obj)">
+                                        <img src="../../public/eye.png">
+                                        <img src="../../public/delete.png" alt="" @click="deleteEmp(obj.id)">
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
 
                 </div>
             </div>
         </div>
-        <div>
-            <v-dialog
-            v-model="dialog"
-            max-width="60vw"
-            >
-            <v-card>
-                <div>
-                    <v-text-field
-                        label="Name"
-                        placeholder="Placeholder"
-                        solo
+        <b-modal id="dialog" size="md" hide-footer hide-header>
+            <div>
+                <p class="title">Dialog</p>
+                <b-form-select class="date-picker" v-model="searchtype" :options="searchoption" placeholder ='City'>
+
+                </b-form-select>
+                <v-text-field
+                        label="Search"
+                        filled
+                        v-model="search"
                     ></v-text-field>
-                    <v-text-field
-                        label="Address"
-                        placeholder="Placeholder"
-                        solo
+                <div class="bottom-btn">
+                    <v-btn class="close-btb" @click="closedialog">CLOSE</v-btn>
+                    <v-btn>SEARCH</v-btn>
+                </div>
+            </div>
+        </b-modal>
+        <b-modal id="model_open"  size="xl" modal-header="" no-close-on-backdrop no-close-on-esc   hide-footer> 
+            <div>
+                <v-form ref="addemployee">
+                <v-text-field
+                        placeholder="Name"
+                        filled
+                        :rules="[rules.required]"
+                        v-model="name"
                     ></v-text-field>
-                    <v-autocomplete
-                        ref="country"
-                        v-model="country"
-                        :rules="[() => !!country || 'This field is required']"
-                        :items="countries"
-                        label="Country"
-                        placeholder="Select..."
-                        required
-                    ></v-autocomplete>
+                    <b-form-datepicker
+                            id="dob"
+                            class="date-picker"
+                            placeholder="DOB"
+                            v-model="dob"
+                            :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+                            locale="en"
+                    ></b-form-datepicker>
+                    <v-text-field               
+                        placeholder="Address"
+                        v-model="address"
+                        :rules="[rules.required]"
+                        filled
+                    ></v-text-field>
+                    <b-form-select class="date-picker" :options="cites" placeholder ='City' v-model="city">
+
+                    </b-form-select>
                     
                     <v-text-field
-                        label="State"
-                        placeholder="Placeholder"
-                        solo
+                        placeholder="State"
+                        v-model="state"
+                        :rules="[rules.required]"
+                        disabled
+                        filled
                     ></v-text-field>
-                 </div>
-            </v-card>
-            
-        </v-dialog>
+                    <experience-card :experience ="this.experience"></experience-card>
+
+                    <v-btn class="commonbtn submitbtn" @click='checkValid()' >submit</v-btn>
+                </v-form>
+            </div>
+        </b-modal>
         </div>
-        <v-dialog
-      v-model="dialog"
-      width="500"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="red lighten-2"
-          dark
-          v-bind="attrs"
-          v-on="on"
-        >
-          Click Me
-        </v-btn>
-      </template>
-
-      <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
-          Privacy Policy
-        </v-card-title>
-
-        <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="dialog = false"
-          >
-            I accept
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     </div>
 </template>
 <script>
 import HeaderPage from "@/components/HeaderPage.vue"
+import ExperienceCard from "@/components/ExperienceCard.vue"
 import {mapGetters} from 'vuex'
+import axios from 'axios';
 export default{
     components:{
-        'header-comp':HeaderPage
+        'header-comp':HeaderPage,
+        'experience-card':ExperienceCard
     },
     computed:{
         ...mapGetters(['users'])
@@ -116,16 +151,256 @@ export default{
     data(){
         return{
             dialog:false,
-            countries:[],
+            search:'',
+            searchtype:null,
+            state:'Tamil Nadu',
+            overallUser:[],
+            editid:null,
+            city:'',
+            address:'',
+            isValid:false,
+            dob:'',
+            name:'',
+            rules: {
+          required: value => {
+            if(value){
+              this.isValid =true
+            }
+            else{
+              this.isValid =false
+            }
+           return !!value || 'Required.'},
+          min: v =>{ 
+            if( v.length >= 8){
+              this.isValid =true
+            }
+            else{
+              this.isValid =false
+            }
+            return v.length >= 8 || 'Min 8 characters'},
+          email: value => {
+              let regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+              console.log('regex.test(value)',regex.test(value))
+           if (!regex.test(value)){
+            this.isValid = false
+            return 'Invalid email'
+           }
+           this.isValid =true
+           return true
+          }
+        },
+            experience:[
+                {
+                    "companyname":"",
+                    "startdate":"",
+                    "enddate":"",
+                    "position":"",
+                },
+                {
+                    "companyname":"",
+                    "startdate":"",
+                    "enddate":"",
+                    "position":"",
+                }
+            ],
+            searchoption:[
+            {
+                    "text":'Select',
+                    "value":null,
+                    disabled:true
+                },
+                {
+                    "text":'Name',
+                    "value":"name",
+                },
+                {
+                    "text":'DOB',
+                    "value":"DOB",
+                },
+                {
+                    "text":'Address',
+                    "value":"Address",
+                },
+                {
+                    "text":'City',
+                    "value":"City",
+                },
+            ],
+            cites:[
+                {
+                    "text":'City',
+                    "value":null,
+                    disabled:true
+                },
+                {
+                    "text":'Chennai',
+                    "value":"Chennai",
+                },
+                {
+                    "text":'Tambarm',
+                    "value":"Tambarm",
+                },
+                {
+                    "text":'Tirunelveli',
+                    "value":"Tirunelveli",
+                },
+                {
+                    "text":'Madurai',
+                    "value":"Madurai",
+                },
+                {
+                    "text":'Surandai',
+                    "value":"Surandai",
+                },
+                {
+                    "text":'ThenKasi',
+                    "value":"   ThenKasi",
+                }
+            ],
             country:null,
+            headers:[
+                {key:'S.No',
+                width:'80px'
+                },
+                {key:'Name',
+                width:'140px'
+                },
+                {key:'DOB',
+                width:'80px'
+                },
+                {key:'Address',
+                width:'140px'
+                },
+                {key:'City',
+                width:'140px'
+                },
+                {key:'State',
+                width:'140px'
+                },
+                {key:'Experience',
+                width:'140px'
+                },
+                {key:'Action',
+                width:'140px'
+                }
+
+            ]
         }
     },
     created(){
-        console.log('users',this.users)
+        setTimeout(()=>{
+            this.getEmploye()
+        },2000)
+        
+       
     },
     methods:{
+        getEmploye(){
+            axios.get(`http://localhost:3000/employee?userid=${this.users['id']}`).then((res)=>{
+                if(res.status ==200||res.status==201){
+                    this.overallUser = res.data
+                }
+        })
+        },
+        deleteEmp(id){
+             axios.delete(`http://localhost:3000/employee/${id}`).then((res)=>{
+                if(res.status ==200|| res.status ==201){
+                    alert("Employee Deleted Succesfully")
+                    this.getEmploye()
+                        }
+
+                })
+        },
+        edit(obj){
+            console.log('obj',obj)
+            this.name = obj.name
+            this.dob = obj.dob
+            this.city = obj.city
+            this.address = obj.address
+            this.state = obj.state
+            this.experience = obj.experience
+            this.editid = obj.id
+            this.$bvModal.show('model_open')
+        },
+        checkValid(){
+            if(this.name ==""||this.dob == ""|| this.city =="" ||this.address ==null ||this.name ==null||this.dob == null|| this.city ==null ||this.address ==null ){
+                alert("Please Fill the user details")
+                return
+            }
+            else if(this.experience.length>0){
+                for(let obj  of this.experience){
+                    if(obj.companyname ==""||obj.startdate ==""|| obj.enddate ==""||obj.position ==""||obj.companyname ==null||obj.startdate ==null|| obj.enddate ==null||obj.position ==null){
+                        alert("Please Fill the Experienc details")
+                        return 
+                    }
+                }
+            }
+            else{
+                this.AddEmplyee()
+            }
+        },
+        async AddEmplyee(){
+
+            
+            let output =0
+            await axios.get(`http://localhost:3000/employee?userid=${this.users['id']}`).then((res)=>{
+                if(res.status ==200|| res.status ==201){
+                    output = res.data.length
+                }
+                })
+            let data = {
+                id :output+1,
+                name:this.name,
+                dob: this.dob,
+                address:this.address,
+                city:this.city,
+                state:"Tamil Nadu",
+                experience:this.experience,
+                userid:this.users['id'],
+            }
+            if(this.editid ==null){
+                    await axios.post(`http://localhost:3000/employee`,data).then((res)=>{
+                if(res.status ==200|| res.status ==201){
+                    this.overallUser.push(data)
+                    this.overallUser = JSON.stringify(JSON.parse(this.overallUser))
+                    this.$bvModal.hide('model_open')
+                    alert("Employee Edited Succesfully")
+                        }
+                        this.getEmploye()
+                })
+            }
+            else{
+                await axios.post(`http://localhost:3000/employee/${this.editid}`,data).then((res)=>{
+                if(res.status ==200|| res.status ==201){
+                    this.overallUser.push(data)
+                    this.overallUser = JSON.stringify(JSON.parse(this.overallUser))
+                    this.$bvModal.hide('model_open')
+                    alert("Employee Added Succesfully")
+                    this.getEmploye()
+                        }
+                })
+            }
+        },
         openModel(){
-            this.dialog =true
+            this.editid = null
+            this.experience = []
+            this.name = ""
+            this.dob = ""
+            this.city = ""
+            this.address = ""
+            this.experience.push( {
+                    "companyname":"",
+                    "startdate":"",
+                    "enddate":"",
+                    "position":"",
+                })
+            this.$bvModal.show('model_open')
+        },
+        openDialog(){
+            this.$bvModal.show('dialog')
+        },
+        closedialog(){
+            this.$bvModal.hide('dialog')
         }
     }
 }
@@ -135,12 +410,22 @@ export default{
     height: 60px !important;
     width: clamp(250px, 400px, 500px) !important;
 }
+.submitbtn{
+    margin-top: 20px;
+    width: 100%;
+}
 .search-btn{
     width: 80px !important;
-    background-color: black;
+    background-color: black !important;
 }
 .search{
     text-align: end !important;
+}
+.actions>img{
+   width: 23px;
+   height: 23px; 
+   cursor: pointer;
+   margin-right:10px ;
 }
 .add-emp-but{
     height: 30vh;
@@ -148,4 +433,30 @@ export default{
     justify-content: center;
     align-items: center;
 }
+.title{
+    color: black;
+    font-weight: bolder;
+}
+th{
+    color: black;
+    font-weight: bold;
+}
+.bottom-btn{
+    display: flex;
+    justify-content: end;
+}
+tr{
+    height: 40px;
+    /* border: 1px solid; */
+    text-align: center;
+}
+th,td{
+    border: 1px solid;
+}
+.close-btb{
+    margin-right: 10px;
+}
+/* #model_open>.v-label--active{
+   left: -68px !important
+} */
 </style>
